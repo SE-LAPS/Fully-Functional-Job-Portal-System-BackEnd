@@ -1,6 +1,7 @@
 package com.example.admin_job_portal_system.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -10,7 +11,8 @@ import com.example.admin_job_portal_system.repository.JobRepository;
 @Service
 @RequiredArgsConstructor
 public class JobService {
-    private final JobRepository jobRepository;
+    @Autowired
+    private  JobRepository jobRepository;
 
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
@@ -40,4 +42,6 @@ public class JobService {
         Job job = getJobById(id);
         jobRepository.delete(job);
     }
+
+
 }

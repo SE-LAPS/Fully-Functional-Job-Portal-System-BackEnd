@@ -3,7 +3,10 @@ package com.example.admin_job_portal_system.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.example.admin_job_portal_system.service.JobService;
 import com.example.admin_job_portal_system.entity.Job;
 import java.util.List;
@@ -13,7 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class JobController {
-    private final JobService jobService;
+    private static final Logger log = LoggerFactory.getLogger(JobController.class);
+    @Autowired
+    private JobService jobService;
 
     @GetMapping
     public List<Job> getAllJobs() {

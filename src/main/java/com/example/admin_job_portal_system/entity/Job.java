@@ -19,4 +19,63 @@ public class Job {
     private String location;
     private Double salary;
     private LocalDateTime postedDate;
+
+    public void setPostedDate(LocalDateTime now) {
+    }
+
+    // Getters
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public Double getSalary() {
+        return salary;
+    }
+
+    public LocalDateTime getPostedDate() {
+        return postedDate;
+    }
+
+    // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setSalary(Double salary) {
+        this.salary = salary;
+    }
+
+
 }
