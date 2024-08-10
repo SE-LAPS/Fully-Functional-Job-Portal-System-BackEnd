@@ -2,6 +2,9 @@ package com.example.admin_job_portal_system.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
 @Entity
