@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,22 +16,31 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/jobs")
+@RequestMapping("/api/jobs/apply")
+@CrossOrigin(origins = "*")  // Allow all origins for CORS
 public class ApplyJobsController {
 
     @Autowired
     private ApplyJobsService applyJobsService;
 
     @PostMapping("/apply")
-    public ResponseEntity<ApplyJobsModel> applyForJob(
+    public ResponseEntity<?> applyForJob(
             @RequestParam("name") String name,
             @RequestParam("email") String email,
             @RequestParam("companyName") String companyName,
             @RequestParam("positionTitle") String positionTitle,
             @RequestParam("resume") MultipartFile resume) {
 
-        // Saving the file to the server
+        // Validate input
+        if (name.isEmpty() || email.isEmpty() || companyName.isEmpty() || positionTitle.isEmpty() || resume.isEmpty()) {
+            return new ResponseEntity<>("All fields are required", HttpStatus.BAD_REQUEST);
+        }
+
+        // Save the resume file
         String resumeFilePath = saveResumeFile(resume);
+        if (resumeFilePath == null) {
+            return new ResponseEntity<>("Failed to save resume file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         // Creating the ApplyJobsModel object
         ApplyJobsModel applyJobsModel = new ApplyJobsModel(name, email, resumeFilePath, companyName, positionTitle);
@@ -73,9 +83,13 @@ public class ApplyJobsController {
         File dest = new File(filePath);
 
         try {
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();  // Create directories if they don't exist
+            }
             file.transferTo(dest);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         return filePath;
