@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+/**
+ * Entity class representing a job application.
+ */
 @Getter
 @Setter
 @Entity
@@ -23,10 +26,21 @@ public class ApplyJobsModel {
     private String companyName;
     private String positionTitle;
 
-    // Constructors, getters, and setters
+    /**
+     * Default constructor.
+     */
     public ApplyJobsModel() {
     }
 
+    /**
+     * Parameterized constructor to initialize all fields.
+     *
+     * @param name           the name of the applicant.
+     * @param email          the email of the applicant.
+     * @param resumeFilePath the file path of the applicant's resume.
+     * @param companyName    the name of the company.
+     * @param positionTitle  the title of the position being applied for.
+     */
     public ApplyJobsModel(String name, String email, String resumeFilePath, String companyName, String positionTitle) {
         this.name = name;
         this.email = email;

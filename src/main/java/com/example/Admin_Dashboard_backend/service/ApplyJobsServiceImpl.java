@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of the ApplyJobsService interface.
+ */
 @Service
 public class ApplyJobsServiceImpl implements ApplyJobsService {
 
@@ -28,6 +31,11 @@ public class ApplyJobsServiceImpl implements ApplyJobsService {
     @Override
     public ApplyJobsModel getApplicationById(Long id) {
         return applyJobsRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public ApplyJobsModel updateApplication(ApplyJobsModel applyJobsModel) {
+        return applyJobsRepository.save(applyJobsModel);
     }
 
     @Override

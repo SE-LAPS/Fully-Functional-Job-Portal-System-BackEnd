@@ -7,10 +7,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service implementation for managing job positions.
+ */
 @Service
 public class JobPositionServiceImpl implements JobPositionService {
     private final JobPositionRepository jobPositionRepository;
 
+    /**
+     * Constructs a new JobPositionServiceImpl with the provided JobPositionRepository.
+     *
+     * @param jobPositionRepository the repository used to manage job positions in the database
+     */
     public JobPositionServiceImpl(JobPositionRepository jobPositionRepository) {
         this.jobPositionRepository = jobPositionRepository;
     }

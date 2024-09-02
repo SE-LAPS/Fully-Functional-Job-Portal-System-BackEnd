@@ -7,9 +7,17 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing job applications.
+ */
 @Repository
 public interface ApplyJobsRepository extends JpaRepository<ApplyJobsModel, Long> {
 
-    @Query("SELECT a.positionTitle, COUNT(a) FROM ApplyJobsModel a GROUP BY a.positionTitle")
+    /**
+     * Counts the number of applications grouped by job title.
+     *
+     * @return a list of job titles and their corresponding application counts.
+     */
+    @Query("SELECT aj.positionTitle, COUNT(aj) FROM ApplyJobsModel aj GROUP BY aj.positionTitle")
     List<Object[]> countApplicationsByJobTitle();
 }
