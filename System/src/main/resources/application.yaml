@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: Job Portal System
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/job_portal
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  security:
+    user:
+      name: prod_admin
+      password: admin123
+    enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org:
+      springframework: INFO
+    job:
+      portal:
+        Job:
+          Portal:
+            System: DEBUG
+
+# JWT Configuration (if you decide to implement JWT)
+# jwt:
+#   secret: your_jwt_secret
+#   expiration: 86400000
