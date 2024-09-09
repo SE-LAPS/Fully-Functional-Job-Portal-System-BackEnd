@@ -1,13 +1,7 @@
 package Job.Portal.System.service;
 
-import Job.Portal.System.model.Resume;
-import Job.Portal.System.model.User;
-import Job.Portal.System.model.WorkExperience;
-import Job.Portal.System.model.Skills;
-import Job.Portal.System.repository.ResumeRepository;
-import Job.Portal.System.repository.SkillsRepository;
-import Job.Portal.System.repository.UserRepository;
-import Job.Portal.System.repository.WorkExperienceRepository;
+import Job.Portal.System.model.*;
+import Job.Portal.System.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +22,19 @@ public class ResumeService {
     private WorkExperienceRepository workExperienceRepository;
 
     @Autowired
-    private SkillsRepository skillRepository;
+    private SkillsRepository skillsRepository;
+
+    @Autowired
+    private DegreeRepository degreeRepository;
+
+    @Autowired
+    private LinksRepository linksRepository;
+
+    @Autowired
+    private ProjectsRepository projectsRepository;
+
+    @Autowired
+    private ReferencesRepository referencesRepository;
 
     public List<Resume> getResumesByUser(String email) {
         User user = userRepository.findByEmail(email)
@@ -45,8 +51,30 @@ public class ResumeService {
     public List<Skills> getSkillsByResume(Long resumeId) {
         Resume resume = resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
-        return skillRepository.findByResume(resume);
+        return skillsRepository.findByResume(resume);
+    }
+
+    public List<Degree> getDegreeByResume(Long resumeId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
+        return degreeRepository.findByResume(resume);
+    }
+
+    public List<Links> getLinksByResume(Long resumeId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
+        return linksRepository.findByResume(resume);
+    }
+
+    public List<Projects> getProjectsByResume(Long resumeId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
+        return projectsRepository.findByResume(resume);
+    }
+
+    public List<References> getReferencesByResume(Long resumeId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
+        return referencesRepository.findByResume(resume);
     }
 }
-
-
