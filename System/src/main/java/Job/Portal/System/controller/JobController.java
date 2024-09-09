@@ -3,19 +3,32 @@ package Job.Portal.System.controller;
 import Job.Portal.System.model.Job;
 import Job.Portal.System.model.Employee;
 import Job.Portal.System.model.JobCategory;
+import Job.Portal.System.payload.AuthPayLoad;
+import Job.Portal.System.producer.KafkaJsonProducer;
 import Job.Portal.System.service.JobService;
 import Job.Portal.System.service.EmployeeService;
 import Job.Portal.System.service.JobCategoryService;
 import Job.Portal.System.service.UserService;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Id;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/jobs")
+@RequiredArgsConstructor
+@Slf4j
 public class JobController {
+
+    private final KafkaJsonProducer kafkaJsonProducer;
 
     // Injecting JobService dependency
     @Autowired
@@ -38,7 +51,12 @@ public class JobController {
      * This method allows adding a new job to the system.
      */
     @PostMapping
-    public ResponseEntity<Job> addJob(@RequestBody Job job) {
+    public ResponseEntity<Job> addJob(@RequestHeader("Authorization") String token, @RequestBody Job job) {
+        UUID uniqueId = UUID.randomUUID();
+        AuthPayLoad authPayLoad = new AuthPayLoad();
+        authPayLoad.setId(uniqueId);
+        authPayLoad.setToken(token);
+        kafkaJsonProducer.sendJsonMessage(authPayLoad);
         Job newJob = jobService.addJob(job);  // Add the new job
         return ResponseEntity.ok(newJob);  // Return the newly added job
     }
@@ -63,6 +81,12 @@ public class JobController {
      */
     @GetMapping
     public ResponseEntity<List<Job>> getAllJobs() {
+        UUID uniqueId = UUID.randomUUID();
+        AuthPayLoad authPayLoad = new AuthPayLoad();
+        authPayLoad.setId(uniqueId);
+        authPayLoad.setToken("dsdasdadsadasdasdsd");
+        log.info("hello");
+        kafkaJsonProducer.sendJsonMessage(authPayLoad);
         List<Job> jobs = jobService.getAllJobs();  // Get all jobs
         return ResponseEntity.ok(jobs);  // Return the list of jobs
     }
