@@ -6,14 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * REST controller for managing job applications.
@@ -27,33 +22,22 @@ public class ApplyJobsController {
     private ApplyJobsService applyJobsService;
 
     /**
-     * Handles job application submissions.
+     * Handles job application submissions with JSON payload.
      *
-     * @param name          the name of the applicant.
-     * @param email         the email of the applicant.
-     * @param companyName   the company name.
-     * @param positionTitle the job title.
-     * @param resume        the resume file.
+     * @param applyJobsModel the job application details.
      * @return the saved application or an error message.
      */
-    @PostMapping("/apply")
-    public ResponseEntity<?> applyForJob(
-            @RequestParam("name") String name,
-            @RequestParam("email") String email,
-            @RequestParam("companyName") String companyName,
-            @RequestParam("positionTitle") String positionTitle,
-            @RequestParam("resume") MultipartFile resume) {
-
-        if (name.isEmpty() || email.isEmpty() || companyName.isEmpty() || positionTitle.isEmpty() || resume.isEmpty()) {
+    @PostMapping
+    public ResponseEntity<?> applyForJob(@RequestBody ApplyJobsModel applyJobsModel) {
+        // Check if any required fields are missing or empty
+        if (applyJobsModel.getName() == null || applyJobsModel.getName().isEmpty() ||
+                applyJobsModel.getEmail() == null || applyJobsModel.getEmail().isEmpty() ||
+                applyJobsModel.getCompanyName() == null || applyJobsModel.getCompanyName().isEmpty() ||
+                applyJobsModel.getPositionTitle() == null || applyJobsModel.getPositionTitle().isEmpty()) {
             return new ResponseEntity<>("All fields are required", HttpStatus.BAD_REQUEST);
         }
 
-        String resumeFilePath = saveResumeFile(resume);
-        if (resumeFilePath == null) {
-            return new ResponseEntity<>("Failed to save resume file", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        ApplyJobsModel applyJobsModel = new ApplyJobsModel(name, email, resumeFilePath, companyName, positionTitle);
+        // Save the job application
         ApplyJobsModel savedApplication = applyJobsService.applyForJob(applyJobsModel);
         return new ResponseEntity<>(savedApplication, HttpStatus.CREATED);
     }
@@ -87,7 +71,7 @@ public class ApplyJobsController {
     /**
      * Updates a job application by its ID.
      *
-     * @param id                the ID of the job application.
+     * @param id the ID of the job application.
      * @param updatedApplication the updated job application details.
      * @return the updated job application, or a not found status if it doesn't exist.
      */
@@ -128,29 +112,5 @@ public class ApplyJobsController {
     public ResponseEntity<Map<String, Integer>> getApplicationCountByJobTitle() {
         Map<String, Integer> applicationCounts = applyJobsService.getApplicationCountByJobTitle();
         return new ResponseEntity<>(applicationCounts, HttpStatus.OK);
-    }
-
-    /**
-     * Saves the resume file to the server.
-     *
-     * @param file the resume file to save.
-     * @return the file path where the resume was saved, or null if an error occurred.
-     */
-    private String saveResumeFile(MultipartFile file) {
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        String filePath = "uploads/" + fileName;
-        File dest = new File(filePath);
-
-        try {
-            if (!dest.getParentFile().exists()) {
-                dest.getParentFile().mkdirs();
-            }
-            file.transferTo(dest);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return filePath;
     }
 }
