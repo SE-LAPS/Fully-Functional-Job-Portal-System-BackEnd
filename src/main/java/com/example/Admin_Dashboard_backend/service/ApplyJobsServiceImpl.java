@@ -47,11 +47,13 @@ public class ApplyJobsServiceImpl implements ApplyJobsService {
     public Map<String, Integer> getApplicationCountByJobTitle() {
         List<Object[]> results = applyJobsRepository.countApplicationsByJobTitle();
         Map<String, Integer> applicationCounts = new HashMap<>();
+
         for (Object[] result : results) {
-            String jobTitle = (String) result[0];
-            Integer count = ((Number) result[1]).intValue();
-            applicationCounts.put(jobTitle, count);
+            String positionTitle = (String) result[0];
+            Long count = (Long) result[1];
+            applicationCounts.put(positionTitle, count.intValue());
         }
+
         return applicationCounts;
     }
 }
