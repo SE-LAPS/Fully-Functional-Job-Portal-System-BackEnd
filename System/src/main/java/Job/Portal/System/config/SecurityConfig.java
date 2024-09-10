@@ -3,6 +3,7 @@ package Job.Portal.System.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,8 +14,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.Collections;
+
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpHeaders.ACCEPT;
 
 @Configuration  // This class provides Spring Security configuration for the application
 @EnableWebSecurity  // Enables Spring Security web security support
@@ -42,12 +48,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Configure HTTP security
-        http
-                .cors().and()  // Enable CORS.
-                .csrf(csrf -> csrf.disable())  // Disable CSRF.
+        http.csrf(Customizer.withDefaults())// Disable CSRF.
                 .authorizeHttpRequests(authz -> authz
                         // Allow public access to registration and login endpoints
-                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                        .requestMatchers(
+                                "/api/users/register",
+                                "/api/users/login",
+                                "/v2/spi-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-resources",
+                                "/swagger-resources/**",
+                                "/configuration/ui",
+                                "/configuration/security",
+                                "/swagger-ui/**",
+                                "/webjars/**",
+                                "/swagger-ui.html"
+                                ).permitAll()
                         // Require authentication for all other requests
                         .anyRequest().authenticated()
                 )
@@ -71,14 +87,40 @@ public class SecurityConfig {
      * This bean configures CORS settings for the application.
      * @return The CorsConfigurationSource bean
      */
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));  // Allow requests from the React frontend.
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));  // Allow common HTTP methods.
+//        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));  // Allow headers necessary for security.
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);  // Apply CORS settings to all endpoints.
+//        return source;  // Return the configured CORS source.
+//    }
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));  // Allow requests from the React frontend.
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));  // Allow common HTTP methods.
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));  // Allow headers necessary for security.
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);  // Apply CORS settings to all endpoints.
-        return source;  // Return the configured CORS source.
+    public CorsFilter corsFilter(){
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Collections.singletonList(
+                "http://localhost:3000"
+        ));
+        config.setAllowedHeaders(Arrays.asList(
+                ORIGIN,
+                AUTHORIZATION,
+                CONTENT_TYPE,
+                ACCEPT
+        ));
+        config.setAllowedMethods(
+                Arrays.asList(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }
