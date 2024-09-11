@@ -8,6 +8,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static java.lang.String.format;
 
 @Service
