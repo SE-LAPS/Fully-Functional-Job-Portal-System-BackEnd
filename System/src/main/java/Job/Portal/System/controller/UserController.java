@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController  // This class handles HTTP requests for user-related operations
 @RequestMapping("/api/users")  // Base URL for all user-related endpoints
@@ -50,7 +51,7 @@ public class UserController {
      * @param loginUser The user's login credentials provided in the request body
      * @return A ResponseEntity containing a success message, user details, or an error message
      */
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User loginUser) {
         try {
             // Attempt to authenticate the user
@@ -61,16 +62,24 @@ public class UserController {
             // Set the authentication context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Retrieve the authenticated user's details
-            User user = userService.findByUsername(loginUser.getUsername());
+            // Retrieve the authenticated user's details from the Optional
+            Optional<User> userOpt = userService.findByUsername(loginUser.getUsername());
 
-            // Prepare the response payload
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Login successful");
-            response.put("user", user);
-            // Note: You might want to generate and include a JWT token here
+            // Check if the user is present
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();  // Extract the user from Optional
 
-            return ResponseEntity.ok(response);  // Return the successful login response
+                // Prepare the response payload
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Login successful");
+                response.put("user", user);
+                // Note: You might want to generate and include a JWT token here
+
+                return ResponseEntity.ok(response);  // Return the successful login response
+            } else {
+                // Return 404 if user not found
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+            }
         } catch (Exception e) {
             // Handle login failure and return an appropriate response
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
@@ -85,8 +94,11 @@ public class UserController {
      */
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        User user = userService.findByUsername(username);  // Find the user by username
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();  // Return the user or 404 if not found
+        // Get the user wrapped in an Optional
+        Optional<User> userOpt = userService.findByUsername(username);
+
+        // Check if the user is present, return 200 with user, else return 404
+        return userOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /*
@@ -97,7 +109,10 @@ public class UserController {
      */
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        User user = userService.findByEmail(email);  // Find the user by email
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();  // Return the user or 404 if not found
+        // Get the user wrapped in an Optional
+        Optional<User> userOpt = userService.findByEmail(email);
+
+        // Check if the user is present, return 200 with user, else return 404
+        return userOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

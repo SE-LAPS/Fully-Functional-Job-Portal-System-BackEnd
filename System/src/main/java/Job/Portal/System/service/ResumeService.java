@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class ResumeService {
 
+
     @Autowired
     private UserRepository userRepository;
 
@@ -36,10 +37,19 @@ public class ResumeService {
     @Autowired
     private ReferencesRepository referencesRepository;
 
+
+
     public List<Resume> getResumesByUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return resumeRepository.findByUser(user);
+    }
+
+    public Resume addResume(Resume resume, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));;
+        resume.setUser(user); // Set the user to the resume
+        return resumeRepository.save(resume); // Save the resume in the database
     }
 
     public List<WorkExperience> getWorkExperiencesByResume(Long resumeId) {

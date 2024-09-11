@@ -3,6 +3,7 @@ package Job.Portal.System.controller;
 import Job.Portal.System.model.Job;
 import Job.Portal.System.model.Employee;
 import Job.Portal.System.model.JobCategory;
+import Job.Portal.System.model.User;
 import Job.Portal.System.service.JobService;
 import Job.Portal.System.service.EmployeeService;
 import Job.Portal.System.service.JobCategoryService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -49,12 +51,23 @@ public class JobController {
      */
     @GetMapping("/company/{companyId}")
     public ResponseEntity<List<Job>> getJobsByCompany(@PathVariable Long companyId) {
-        Employee company = employeeService.findByUser(userService.findByUsername(companyId.toString()));  // Find the company
-        if (company != null) {
-            List<Job> jobs = jobService.getJobsByCompany(company);  // Get jobs for the company
-            return ResponseEntity.ok(jobs);  // Return the list of jobs
+        // Convert companyId to username if necessary
+        String username = companyId.toString();
+
+        // Fetch user by username
+        Optional<User> userOptional = userService.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Return 404 if user is not found
         }
-        return ResponseEntity.notFound().build();  // Return 404 if company is not found
+
+        User user = userOptional.get();
+        Employee company = employeeService.findByUser(user);
+        if (company != null) {
+            List<Job> jobs = jobService.getJobsByCompany(company);
+            return ResponseEntity.ok(jobs);
+        }
+
+        return ResponseEntity.notFound().build(); // Return 404 if company is not found
     }
 
     /*

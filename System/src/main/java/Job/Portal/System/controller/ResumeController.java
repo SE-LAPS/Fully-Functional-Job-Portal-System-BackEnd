@@ -4,20 +4,23 @@ import Job.Portal.System.model.*;
 import Job.Portal.System.service.ResumeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/resumes")
+@RequestMapping("/api/resumes")
 @RequiredArgsConstructor
 public class ResumeController {
 
     private final ResumeService resumeService;
+
+    @PostMapping
+    public ResponseEntity<Resume> addResume(@RequestBody Resume resume, Principal principal) {
+        Resume createdResume = resumeService.addResume(resume, principal.getName());
+        return ResponseEntity.ok(createdResume);
+    }
 
     @GetMapping("/my")
     public ResponseEntity<List<Resume>> getMyResumes(Principal principal) {

@@ -43,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Configure HTTP security
         http
-                .cors().and()  // Enable CORS.
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // Enable CORS with updated method.
                 .csrf(csrf -> csrf.disable())  // Disable CSRF.
                 .authorizeHttpRequests(authz -> authz
                         // Allow public access to registration and login endpoints
