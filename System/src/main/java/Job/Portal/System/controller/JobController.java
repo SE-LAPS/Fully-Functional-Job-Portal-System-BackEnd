@@ -33,7 +33,6 @@ public class JobController {
 
     private final KafkaJsonProducer kafkaJsonProducer;
     private final KafkaConsumer kafkaConsumer;
-    private AuthResult authResult;
     UUID uniqueId = UUID.randomUUID();
     AuthPayLoad authPayLoad = new AuthPayLoad();
 
@@ -57,8 +56,7 @@ public class JobController {
         authPayLoad.setId(uniqueId);
         authPayLoad.setToken(token);
         kafkaJsonProducer.sendJsonMessage(authPayLoad);
-        authResult = kafkaConsumer.consumeJsonMsg();
-        return
+        return kafkaConsumer.consumeJsonMsg().isResult();
     }
 
     /*
