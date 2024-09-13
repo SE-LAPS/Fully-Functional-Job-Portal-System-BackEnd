@@ -5,6 +5,7 @@ import Job.Portal.System.model.Job;
 import Job.Portal.System.model.Employee;
 import Job.Portal.System.model.JobCategory;
 import Job.Portal.System.payload.AuthPayLoad;
+import Job.Portal.System.payload.AuthResult;
 import Job.Portal.System.producer.KafkaJsonProducer;
 import Job.Portal.System.service.JobService;
 import Job.Portal.System.service.EmployeeService;
@@ -31,7 +32,8 @@ import java.util.UUID;
 public class JobController {
 
     private final KafkaJsonProducer kafkaJsonProducer;
-    private  final KafkaConsumer kafkaConsumer;
+    private final KafkaConsumer kafkaConsumer;
+    private AuthResult authResult;
     UUID uniqueId = UUID.randomUUID();
     AuthPayLoad authPayLoad = new AuthPayLoad();
 
@@ -55,10 +57,8 @@ public class JobController {
         authPayLoad.setId(uniqueId);
         authPayLoad.setToken(token);
         kafkaJsonProducer.sendJsonMessage(authPayLoad);
-
-        wait(
-              return  kafkaConsumer.consumeJsonMsg();
-        );
+        authResult = kafkaConsumer.consumeJsonMsg();
+        return
     }
 
     /*

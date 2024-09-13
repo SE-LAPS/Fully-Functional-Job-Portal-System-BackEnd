@@ -1,7 +1,6 @@
 package Job.Portal.System.consumer;
 
 import Job.Portal.System.payload.AuthResult;
-import com.SpringReactive.kafka.payload.Student;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,9 +15,9 @@ public class KafkaConsumer {
 
     private final AuthResult authResult;
 
-    @KafkaListener(topics = "validate_jwt", groupId = "myGroup")
-    public boolean consumeJsonMsg(){
+    @KafkaListener(topics = "validate_jwt_result", groupId = "authGroup")
+    public AuthResult consumeJsonMsg(){
         log.info(format("Consuming the Json message from validate_jwt :: %s",authResult));
-        return authResult.isResult();
+        return authResult;
     }
 }
