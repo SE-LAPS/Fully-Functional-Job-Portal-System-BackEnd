@@ -4,6 +4,7 @@ import Job.Portal.System.consumer.KafkaConsumer;
 import Job.Portal.System.model.Job;
 import Job.Portal.System.model.Employee;
 import Job.Portal.System.model.JobCategory;
+
 import Job.Portal.System.payload.AuthPayLoad;
 import Job.Portal.System.payload.AuthResult;
 import Job.Portal.System.producer.KafkaJsonProducer;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import java.util.UUID;
 
 @RestController
@@ -80,6 +82,7 @@ public class JobController {
      * This method retrieves all jobs associated with a particular company.
      */
     @GetMapping("/company/{companyId}")
+
     public ResponseEntity<List<Job>> getJobsByCompany(@PathVariable Long companyId, @RequestHeader("Authorization") String token) {
         if(authorizedToken(token)){
             Employee company = employeeService.findByUser(userService.findByUsername(companyId.toString()));  // Find the company

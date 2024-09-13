@@ -48,6 +48,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Configure HTTP security
+
         http.csrf(Customizer.withDefaults())// Disable CSRF.
                 .authorizeHttpRequests(authz -> authz
                         // Allow public access to registration and login endpoints

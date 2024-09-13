@@ -3,6 +3,8 @@ package Job.Portal.System.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * Represents a user in the job portal system.
  */
@@ -33,4 +35,7 @@ public class User {
     public enum Role {
         ADMIN, JOB_SEEKER, COMPANY
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Resume> resumes;
 }

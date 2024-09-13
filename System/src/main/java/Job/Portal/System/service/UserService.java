@@ -11,8 +11,8 @@ public interface UserService {
     Optional<User> findById(Long id);
 
     // Method to find a user by their username
-    User findByUsername(String username);
+    Optional <User> findByUsername(String username);
 
     // Method to find a user by their email
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }
