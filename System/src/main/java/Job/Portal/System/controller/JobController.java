@@ -4,15 +4,11 @@ import Job.Portal.System.consumer.KafkaConsumer;
 import Job.Portal.System.model.Job;
 import Job.Portal.System.model.Employee;
 import Job.Portal.System.model.JobCategory;
-import Job.Portal.System.payload.AuthPayLoad;
-import Job.Portal.System.payload.AuthResult;
 import Job.Portal.System.producer.KafkaJsonProducer;
 import Job.Portal.System.service.JobService;
 import Job.Portal.System.service.EmployeeService;
 import Job.Portal.System.service.JobCategoryService;
 import Job.Portal.System.service.UserService;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field;
@@ -25,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @RestController
 @RequestMapping("/api/jobs")
 @RequiredArgsConstructor
@@ -34,7 +32,7 @@ public class JobController {
     private final KafkaJsonProducer kafkaJsonProducer;
     private final KafkaConsumer kafkaConsumer;
     UUID uniqueId = UUID.randomUUID();
-    AuthPayLoad authPayLoad = new AuthPayLoad();
+    //AuthPayLoad authPayLoad = new AuthPayLoad();
 
     // Injecting JobService dependency
     @Autowired
@@ -52,11 +50,17 @@ public class JobController {
     @Autowired
     private UserService userService;
 
+//    boolean authorizedToken(String token){
+//        authPayLoad.setId(uniqueId);
+//        authPayLoad.setToken(token);
+//        kafkaJsonProducer.sendJsonMessage(authPayLoad);
+//        return kafkaConsumer.consumeJsonMsg().isResult();
+//    }
+
     boolean authorizedToken(String token){
-        authPayLoad.setId(uniqueId);
-        authPayLoad.setToken(token);
-        kafkaJsonProducer.sendJsonMessage(authPayLoad);
-        return kafkaConsumer.consumeJsonMsg().isResult();
+        kafkaJsonProducer.sendJsonMessage("true");
+        log.info(format("Consuming the message from chamithTopic :: %s",token));
+        return kafkaConsumer.consumeMsg("true").equals("true");
     }
 
     /*

@@ -1,6 +1,5 @@
 package Job.Portal.System.consumer;
 
-import Job.Portal.System.payload.AuthResult;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,11 +12,18 @@ import static java.lang.String.format;
 @Slf4j
 public class KafkaConsumer {
 
-    private final AuthResult authResult;
+    //private final AuthResult authResult;
+
+//    @KafkaListener(topics = "validate_jwt_result", groupId = "authGroup")
+//    public AuthResult consumeJsonMsg(){
+//        log.info(format("Consuming the Json message from validate_jwt :: %s",authResult));
+//        return authResult;
+//    }
 
     @KafkaListener(topics = "validate_jwt_result", groupId = "authGroup")
-    public AuthResult consumeJsonMsg(){
-        log.info(format("Consuming the Json message from validate_jwt :: %s",authResult));
-        return authResult;
+    public String consumeMsg(String msg){
+        log.info(format("Consuming the message from chamithTopic :: %s",msg));
+        return "true";
     }
+
 }

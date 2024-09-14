@@ -1,5 +1,4 @@
 package Job.Portal.System.producer;
-import Job.Portal.System.payload.AuthPayLoad;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -17,16 +16,23 @@ import static java.lang.String.format;
 @Slf4j
 public class KafkaJsonProducer {
 
-    private final KafkaTemplate<String, AuthPayLoad> kafkaTemplate;
+//    private final KafkaTemplate<String, String> kafkaTemplate;
+//
+//    public void sendJsonMessage(String authPayLoad){
+//
+//        Message<String> message = MessageBuilder
+//                .withPayload(authPayLoad)
+//                .setHeader(KafkaHeaders.TOPIC,"validate_jwt")
+//                .build();
+//
+//        log.info(format("Sending validate_jwt :: %s", authPayLoad));
+//        kafkaTemplate.send(message);
+//    }
 
-    public void sendJsonMessage(AuthPayLoad authPayLoad){
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-        Message<AuthPayLoad> message = MessageBuilder
-                .withPayload(authPayLoad)
-                .setHeader(KafkaHeaders.TOPIC,"validate_jwt")
-                .build();
-
-        log.info(format("Sending validate_jwt :: %s", authPayLoad));
-        kafkaTemplate.send(message);
+    public void sendJsonMessage(String msg){
+        log.info(format("String message to Topic wikimedia-stream  :: %s",msg));
+        kafkaTemplate.send("wikimedia-stream",msg);
     }
 }
